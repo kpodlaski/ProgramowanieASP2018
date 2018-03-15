@@ -7,7 +7,8 @@ namespace BasicWebApi.Models
 {
     public class PhoneBook
     {
-        public List<Person> persons; 
+        private List<Person> persons;
+        private List<Phone> phones;
 
         public PhoneBook()
         {
@@ -34,6 +35,31 @@ namespace BasicWebApi.Models
               }
             };
 
-        }       
+        }
+
+        public List<Person> GetPersons()
+        {
+            return persons.Select(p => (Person) p.Clone()).ToList();
+        }
+
+        public Person GetPersonWithID(int id)
+        {
+            return (Person) persons[id].Clone();
+        }
+
+        public Person AddNewPerson(Person person) { 
+            return null;
+        }
+
+        public Person UpdatePersonWithID(int id, Person person)
+        {
+            return null;
+        }
+
+        public Person DeletePerson(int id)
+        {
+            return null;
+        }
+
     }
 }

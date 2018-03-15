@@ -1,6 +1,7 @@
 ﻿using BasicWebApi.Models;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -10,7 +11,7 @@ namespace BasicWebApi.Controllers
 {
     public class PersonController : ApiController
     {
-        PhoneBook phoneBook = new PhoneBook();
+        static PhoneBook phoneBook = new PhoneBook();
         // GET: api/Person
         public IEnumerable<Person> Get()
         {
@@ -25,18 +26,41 @@ namespace BasicWebApi.Controllers
         }
 
         // POST: api/Person
-        public void Post([FromBody]string value)
+        public Person Post([FromBody]Person person)
         {
+            Debug.WriteLine("Zapytanie Post");
+            Debug.WriteLine(person.Name);
+            //Należało by sprawdzić czy osoba istnieje w phonebook
+            lock (phoneBook) {
+                int id = phoneBook.persons.Count;
+                person.ID = id;
+                phoneBook.persons.Add(person);
+            }
+            return person;
         }
 
         // PUT: api/Person/5
-        public void Put(int id, [FromBody]string value)
+        public Person Put(int id, [FromBody]Person person)
         {
+            Person x;
+            lock (phoneBook) { 
+                x = phoneBook.persons[id];
+                x.Name = person.Name;
+                x.Organization = person.Organization;
+                x.Phones = person.Phones;
+            }
+            return x;
         }
 
         // DELETE: api/Person/5
-        public void Delete(int id)
+        public Person Delete(int id)
         {
+            Person x;
+            lock (phoneBook)
+            {
+                x = phoneBook.persons[id];
+            }
+            return x;
         }
     }
 }
