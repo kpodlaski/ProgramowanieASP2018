@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Web;
 using System.Web.Http;
 
 namespace BasicWebApi.Controllers
@@ -15,14 +16,27 @@ namespace BasicWebApi.Controllers
         // GET: api/Person
         public IEnumerable<Person> Get()
         {
-            return phoneBook.persons;
+            return phoneBook.GetPersons();
 
         }
 
+        /// <summary>
+        /// Looks up persons from phonebook by ID.
+        /// </summary>
+        /// <param name="id">The ID of the person to be retrived.</param>
         // GET: api/Person/5
         public Person Get(int id)
         {
-            return phoneBook.persons[id];
+            Person p = phoneBook.GetPersonWithID(id);
+            if (p == null)
+            {
+                var response = new HttpResponseMessage(HttpStatusCode.NotFound)
+                {
+                    Content = new StringContent("Unable to find any results")
+                };
+                throw new HttpResponseException(response);
+            }
+            return p;
         }
 
         // POST: api/Person
@@ -30,37 +44,37 @@ namespace BasicWebApi.Controllers
         {
             Debug.WriteLine("Zapytanie Post");
             Debug.WriteLine(person.Name);
-            //Należało by sprawdzić czy osoba istnieje w phonebook
-            lock (phoneBook) {
-                int id = phoneBook.persons.Count;
-                person.ID = id;
-                phoneBook.persons.Add(person);
+            if (!phoneBook.AddNewPerson(person))
+            {
+                var response = new HttpResponseMessage(HttpStatusCode.NotFound)
+                {
+                    Content = new StringContent("Unable to find any results")
+                };
+                throw new HttpResponseException(response);
             }
             return person;
+            
         }
 
         // PUT: api/Person/5
         public Person Put(int id, [FromBody]Person person)
         {
-            Person x;
-            lock (phoneBook) { 
-                x = phoneBook.persons[id];
-                x.Name = person.Name;
-                x.Organization = person.Organization;
-                x.Phones = person.Phones;
+            if (!phoneBook.UpdatePersonWithID(id, person))
+            {
+                var response = new HttpResponseMessage(HttpStatusCode.NotFound)
+                {
+                    Content = new StringContent("Unable to find any results")
+                };
+                throw new HttpResponseException(response);
             }
-            return x;
+            return person;
         }
 
         // DELETE: api/Person/5
         public Person Delete(int id)
         {
-            Person x;
-            lock (phoneBook)
-            {
-                x = phoneBook.persons[id];
-            }
-            return x;
+            
+            return phoneBook.DeletePerson(id);
         }
     }
 }
