@@ -13,13 +13,13 @@
             $("#phonebook").append("<table>");
             $("#phonebook").append("<tr><td>ID</td><td>Name</td><td>Organization</td></tr>");
             for (i = 0; i < data.length; i++) {
-                $("#phonebook").append("<tr>");
-                $("#phonebook").append("<td>" + data[i].ID+"</td>");
-                $("#phonebook").append("<td>" + data[i].Name+"</td>");
-                $("#phonebook").append("<td>" + data[i].Organization + "</td>");
-                $("#phonebook").append("<td> <button id='btn_" + i + "' onclick='details(" + i + ")' >  Details</button> </td>");
-                $("#phonebook").append("<td> <button id='btn_e" + i + "' class='edit_btn' >  Edit</button> </td>");
-                $("#phonebook").append("</tr>");
+                var row = "<tr>";
+                row += "<td>" + data[i].ID + "</td>";
+                row +="<td>" + data[i].Name+"</td>";
+                row +="<td>" + data[i].Organization + "</td>";
+                row +="<td> <button id='btn_" + i + "' onclick='details(" + i + ")' >  Details</button> </td>";
+                row +="<td> <button id='btn_e" + i + "' class='edit_btn' >  Edit</button> </td>";
+                $("#phonebook").append(row+"</tr>");
             }
             $("#phonebook").append("</table>");
             $(".edit_btn").click(function () {
