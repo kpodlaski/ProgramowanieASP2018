@@ -13,6 +13,11 @@ namespace RestClient
     {
         private HttpClient client = new HttpClient();
 
+        private RestClient()
+        {
+
+        }
+
         public async Task<String> CreatePersonAsync(Person person)
         {
             Console.WriteLine(person.AsJSON());
@@ -67,11 +72,12 @@ namespace RestClient
 
         public static RestClient NewInstance(String url)
         {
-            client.BaseAddress = new Uri(url);
-            client.DefaultRequestHeaders.Accept.Clear();
-            client.DefaultRequestHeaders.Accept.Add(
+            RestClient rc = new RestClient();
+            rc.client.BaseAddress = new Uri(url);
+            rc.client.DefaultRequestHeaders.Accept.Clear();
+            rc.client.DefaultRequestHeaders.Accept.Add(
                 new MediaTypeWithQualityHeaderValue("application/json"));
-            return this;
+            return rc;
         }
     }
 }
